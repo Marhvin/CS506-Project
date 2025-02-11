@@ -19,7 +19,8 @@ The goal of this project is to successfully predict the number of gate entries i
 
 
 ## Visualization
-- Time Series Plots to compare ridership between lines Scatter Plots with Regression Lines (Ridership vs. Temperature, Precipitation, Wind Speed)
+- Time Series Plots to compare ridership between lines
+- Scatter Plots with Regression Lines (Ridership vs. Temperature, Precipitation, Wind Speed)
 - Interactive map of MBTA stations showing ridership in different weather conditions
 
 

@@ -1,4 +1,4 @@
-# CS506 Project Proposal
+# T-Cast, a CS506 project
 
 ## Project Description
 Using historical data publicly available from the MBTA website, our project will predict the number of people that use the train of a given station (By measuring gate entries), depending on the weather conditions (Temp., Clear, Rain, Snow). 

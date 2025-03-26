@@ -165,7 +165,7 @@ df_weather.to_csv(weather_processed_file, index=False)
 
 
 
-# Merge MBTA and weather data on the date (left join so we keep all MBTA records)
+# Merge MBTA and weather data on the date)
 df_merged = pd.merge(df_mbta_grouped, df_weather, on='service_date', how='inner')
 
 # Weather data only goes up to March 1st, 2023, so the merged data should also only go up to that date

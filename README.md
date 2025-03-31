@@ -10,13 +10,18 @@ The goal of this project is to successfully predict the number of gate entries i
 
 ## Data Collection
 
-- The number of gate entries for each MBTA train station per day in 2018-2023. This data can be sourced from MassGIS Data Hub, which publicly provides data on MBTA gate entries per day.
+- The number of gate entries for each MBTA train station per day in 2018-2023. This data can be sourced from MassGIS Data Hub, which publicly provides data on MBTA gate entries per day. (https://gis.data.mass.gov/datasets/MassDOT::mbta-gated-station-entries-historical/about)
 - Weather conditions/report per day in 2018-2023, which can be sourced from a Kaggle dataset, which provides the temperature, precipitation, condition, humidity, and wind for a given day. (https://www.kaggle.com/datasets/swaroopmeher/boston-weather-2013-2023)
 
 ## Data Cleaning
 
-- Organize stations by line, being able to get number of entries per line
-- Aliign dates of data together, making sure each time period corresponds with eachother
+- Outlined the null values of the raw MBTA and weather datasets.
+    - MBTA: There were a lot of null values for the stop_id column, but since we are looking at gated entries by station, we can ignore it.
+    - Weather: wdir (wind direction) and pres (average sea-level air pressure): We don't believe that these two values would have much impact on mbta ridership levels, so we decided to leave them off in the processed dataset. There was also one null value for tavg, which we imputed by taking the average of the tmax and tmin of that day.
+- Dropped additional columns that weren't as important.
+    - MBTA: We mostly care about the gated_entries, service_date, and the station_name values as identifiers that we could use and predict on based on the weather data. Therefore, we decided to drop the other columns and just keep these three.
+- Aliign dates of data together, making sure each time period corresponds with each other
+    - We merged the processed MBTA and weather datasets based on the dates that the data was gathered from. They ranged from the start of 2013 to March, 2023. The resulting dataset has the columns: service_date, station_name, gated_entries, tavg, tmin, tmax, prcp, and wspd. gated_entries is our target variable.
 
 ## Modelling
 

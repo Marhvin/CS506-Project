@@ -21,7 +21,7 @@ The goal of this project is to successfully predict the number of gate entries i
 - Dropped additional columns that weren't as important.
     - MBTA: We mostly care about the gated_entries, service_date, and the station_name values as identifiers that we could use and predict on based on the weather data. Therefore, we decided to drop the other columns and just keep these three.
 - Aliign dates of data together, making sure each time period corresponds with each other
-    - We merged the processed MBTA and weather datasets based on the dates that the data was gathered from. They ranged from the start of 2013 to March, 2023. The resulting dataset has the columns: service_date, station_name, gated_entries, tavg, tmin, tmax, prcp, and wspd. gated_entries is our target variable.
+    - We merged the processed MBTA and weather datasets based on the dates that the data was gathered from. They ranged from the start of 2018 to March, 2023. The resulting dataset has the columns: service_date, station_name, gated_entries, tavg, tmin, tmax, prcp, and wspd. gated_entries is our target variable.
 
 ## Modelling
 

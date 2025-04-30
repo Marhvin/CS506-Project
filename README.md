@@ -105,6 +105,34 @@ We implemented a progressive modeling approach to understand the relationship be
 - Features with the largest coefficient magnitude were: is_covid_period, is_recovery_period, is_weekend, covid_weekend, is_post_covid
   - Shows that these new added features affect the model significantly, but also that this model requires more tweaking
 
+![alt text](data/images/secondenhanced.png)
+
+### Pipeline Model
+- Used the same features as second Enhanced LinReg Model
+- Pipeline Model
+  - PolynomialFeatures
+    - Allows model to learn non‐linear and interaction effects (e.g. lag1 × roll7).
+  - StandardScaler 
+    - Ensures that each feature is on a comparable scale
+  - RidgeCV 
+    - Fits linear model with L2 regularization & uses time‐series cross‐validation to pick the best alpha
+
+![alt text](data/images/pipeline.png)
+
+### Station-aware Pipeline Model
+- One-hot encode stations 
+  - Creates one dummy column per station so the model can learn a separate intercept shift for each
+  - Added these station dummies to the existing X_cols feature columns
+- Same pipeline as previous Pipeline model
+  - PolynomialFeatures
+    - Allows model to learn non‐linear and interaction effects (e.g. lag1 × roll7).
+  - StandardScaler 
+    - Ensures that each feature is on a comparable scale
+  - RidgeCV 
+    - Fit linear model with L2 regularization & uses time‐series cross‐validation to pick the best alpha
+
+![alt text](data/images/stationawarepipeline1.png)
+![alt text](data/images/stationawarepipeline2.png)
 
 ## Key Insights
 

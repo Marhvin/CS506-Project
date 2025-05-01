@@ -67,7 +67,7 @@ We implemented a progressive modeling approach to understand the relationship be
 
 ![alt text](data/images/baseline.png)
 
-### Enhanced Linear Regression Model:
+### Enhanced Linear Regression Model w/ Temporal & Categorical Features:
 
 - Added temporal features: Day of week, month, and weekend indicator
 - Added categorical features: Line color
@@ -82,6 +82,57 @@ We implemented a progressive modeling approach to understand the relationship be
 - Found varying weather sensitivity across different lines
 - Green Line showed highest weather sensitivity, possibly due to its above-ground segments
 - Line-specific models revealed unique patterns in how different parts of the system respond to weather
+
+### Enhanced Linear Regression Model w/ Even More Features:
+
+- Season Feature
+  - Looks at which season the date is in (fall, winter, spring, or summer)
+- US Holiday Feature
+  - Looks at whether the date lands on a US holiday
+  - Looks at how many days away a previous/following holiday is, because holiday seasons can affect ridership
+- Week Start Feature
+  - Computes the Monday date of that week
+  - Helps aggregate daily ridership within a weekly bucket
+- Lagging Feature
+  - Helps predict current day's number of gate entries by using the day before's number of entries
+- Rolling Feature
+  - Computes average ridership over past 7 days to smooth noise & capture small trends in ridership
+- Cyclical Month Feature
+  - Allows for smooth transition between months (i.e. December to January)
+- COVID Features
+  - COVID-19 Pandemic caused significant decrease in ridership --> features for initial shutdown period and following recovery periods account for that
+  - Weekends during COVID periods decreased even more than weekday since people were not going out for leisure as much; account for that with is_covid_weekend and is_recovery_weekend
+- Features with the largest coefficient magnitude were: is_covid_period, is_recovery_period, is_weekend, covid_weekend, is_post_covid
+  - Shows that these new added features affect the model significantly, but also that this model requires more tweaking
+
+![alt text](data/images/secondenhanced.png)
+
+### Pipeline Model
+- Used the same features as second Enhanced LinReg Model
+- Pipeline Model
+  - PolynomialFeatures
+    - Allows model to learn non‐linear and interaction effects (e.g. lag1 × roll7).
+  - StandardScaler 
+    - Ensures that each feature is on a comparable scale
+  - RidgeCV 
+    - Fits linear model with L2 regularization & uses time‐series cross‐validation to pick the best alpha
+
+![alt text](data/images/pipeline.png)
+
+### Station-aware Pipeline Model
+- One-hot encode stations 
+  - Creates one dummy column per station so the model can learn a separate intercept shift for each
+  - Added these station dummies to the existing X_cols feature columns
+- Same pipeline as previous Pipeline model
+  - PolynomialFeatures
+    - Allows model to learn non‐linear and interaction effects (e.g. lag1 × roll7).
+  - StandardScaler 
+    - Ensures that each feature is on a comparable scale
+  - RidgeCV 
+    - Fit linear model with L2 regularization & uses time‐series cross‐validation to pick the best alpha
+
+![alt text](data/images/stationawarepipeline1.png)
+![alt text](data/images/stationawarepipeline2.png)
 
 ## Key Insights
 

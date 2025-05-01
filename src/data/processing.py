@@ -27,23 +27,10 @@ data_dir = os.path.join(script_dir, "..", '..', 'data', 'raw', 'yearly_mbta_data
 
 # Handling the folder of yearly mbta data
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Creates a combined csv file from a zip folder of mbta csv files
 def process_zip(data_dir = data_dir):
   # Create a list of all CSV files in the directory.
-  csv_files = glob.glob(os.path.join(data_dir, "*.csv"))
+  csv_files = glob.glob(os.path.join(data_dir, "**", "*.csv"), recursive=True)
 
   # Read and collect all DataFrames.
   list_of_dfs = []
@@ -110,6 +97,7 @@ def process_mbta(mbta_path = mbta_path):
 
   os.makedirs(processed_dir, exist_ok=True)
   df_mbta_grouped.to_csv(mbta_processed_file, index=False)
+  return df_mbta_grouped
 
 
 def process_weather(weather_path):
@@ -164,6 +152,7 @@ def process_weather(weather_path):
   weather_processed_file = os.path.join(processed_dir, "processed_weather.csv")
   os.makedirs(processed_dir, exist_ok=True)
   df_weather.to_csv(weather_processed_file, index=False)
+  return df_weather
   
   
   

@@ -258,7 +258,7 @@ By analyzing the graphs of precipitation (prcp bins) and wind speed (WSPD bins) 
 - However, in stations like Aquarium and Revere Beach, entries increase with higher temperatures.
 - This suggests a correlation with seasonal travel patterns, where people visit more outdoor or recreational areas during summer.
 
-### Interactive Visualizations
+## Interactive Visualizations
 
 - heatmapvisualization.py: Creates an interactive animation showing MBTA station ridership with heat-mapped error markers on a coordinate grid, featuring a timeline slider and weather condition display for each date.
 
@@ -266,6 +266,14 @@ By analyzing the graphs of precipitation (prcp bins) and wind speed (WSPD bins) 
 
 ![alt text](data/images/heatmap.gif)
 ![alt text](data/images/visualization.gif)
+
+### Further Insights
+
+- The model predicts station entries more accurately when daily entries are close to the station's average; large fluctuations lead to more errors.
+
+- Busier stations tend to have more inaccurate predictions, likely due to unpredictable surges from events like sports games, concerts, commencements, or holidays.
+
+- The geographic map visualization helps identify spatial patterns—errors often affect entire lines, possibly due to system-wide disruptions or the closure of connecting stations.
 
 ## Running and Setting Up The Project
 

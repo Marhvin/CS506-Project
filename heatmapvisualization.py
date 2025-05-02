@@ -114,10 +114,9 @@ df = entries.rename(columns={'station_name': 'station'})[
 
 #for colors on the dots
 df['error'] = (df['predicted_entries'] - df['actual_entries']).abs()
-df['color'] = np.where(df['error'] <= 2000, 'within ±2000', 'outside ±2000')
 
 max_actual = df['actual_entries'].max()
-max_px = 40  
+max_px = 80  
 
 dates = sorted(df['date'].unique())
 first = dates[0]
@@ -128,29 +127,30 @@ scatter0 = go.Scatter(
     mode='markers',
     marker=dict(
         size=(df0['actual_entries'] / max_actual) * max_px,
-        color=df0['predicted_entries'],
-        coloraxis='coloraxis'
+        color=df0['error'],            
+        coloraxis='coloraxis'         
     ),
     text=df0['station'],
+    customdata=np.stack([ [df0.at[s,'actual_entries'] for s in df0.index], [df0.at[s,'error'] for s in df0.index],[df0.at[s,'predicted_entries'] for s in df0.index]], axis=-1),
     hovertemplate=(
         "%{text}<br>"
-        "Actual: %{marker.size:.0f}<br>"
-        "Predicted: %{marker.color:.0f}<extra></extra>"
+        "Actual entries: %{customdata[0]:.0f}<br>"
+        "Estimated entries: %{customdata[2]:.0f}<br>"
+        "Error: %{customdata[1]:.0f}<extra></extra>"
     )
 )
 
 layout = go.Layout(
     title=f"Entries on {first} — …weather…",
     xaxis=dict(visible=False, range=[0,100]),
-    yaxis=dict(visible=False, range=[100,0]),
+    yaxis=dict(visible=False, range=[0,100]),
     template='plotly_white',
-    )
-
+)
 layout.update(coloraxis=dict(
-    colorscale='Viridis',
-    cmin=df['predicted_entries'].min(),
-    cmax=df['predicted_entries'].max(),
-    colorbar=dict(x=1.02, y=0.5, title='Predicted')
+    colorscale=[[0.0, 'green'], [1.0, 'red']],
+    cmin=0,                       
+    cmax=df['error'].max(),
+    colorbar=dict(x=1.02, y=0.5, title='|Pred−Act|')
 ))
 
 frames = []
@@ -162,14 +162,16 @@ for date in dates:
         mode='markers',
         marker=dict(
             size=sizes,
-            color=grp['predicted_entries'],
-            colorscale='Viridis',
+            color=grp['error'],        
+            coloraxis='coloraxis'     
         ),
         text=grp['station'],
+        customdata=np.stack([ [df0.at[s,'actual_entries'] for s in df0.index], [df0.at[s,'error'] for s in df0.index],[df0.at[s,'predicted_entries'] for s in df0.index]], axis=-1),
         hovertemplate=(
             "%{text}<br>"
-            "Actual: %{marker.size:.0f}<br>"
-            "Predicted: %{marker.color:.0f}<extra></extra>"
+            "Actual entries: %{customdata[0]:.0f}<br>"
+            "Estimated entries: %{customdata[2]:.0f}<br>"
+            "Error: %{customdata[1]:.0f}<extra></extra>"
         )
     )
     # weather for title

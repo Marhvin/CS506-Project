@@ -2,6 +2,7 @@
 
 ## Project Description
 
+Final Report Video: https://www.youtube.com/watch?v=wjziJXPK-m8
 Midterm Report Video: https://youtu.be/1qrfAWM0dHE?feature=shared 
 
 [Jump to Project Setup and Testing Instructions](#running-and-setting-up-the-project)

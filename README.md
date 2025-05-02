@@ -219,14 +219,6 @@ We implemented a progressive modeling approach to understand the relationship be
   - R² Score
 - **Model Comparison**: Enhanced model (with temporal features) significantly outperforms weather-only model
 
-## Next Steps
-
-- Explore more advanced models (Random Forest, XGBoost) to capture non-linear relationships
-- Incorporate holiday and special event data
-- Develop more sophisticated time-series models
-- Create station-specific models for key locations
-- Investigate weather-temporal interaction effects (e.g., how precipitation affects weekend vs weekday ridership differently)
-
 ## Visualization
 
 ![alt text](data/images/scatterbox.png)
@@ -265,6 +257,15 @@ By analyzing the graphs of precipitation (prcp bins) and wind speed (WSPD bins) 
 - We can observe a clear curve in gated entries decreasing in certain conditions.
 - However, in stations like Aquarium and Revere Beach, entries increase with higher temperatures.
 - This suggests a correlation with seasonal travel patterns, where people visit more outdoor or recreational areas during summer.
+
+### Interactive Visualizations
+
+- heatmapvisualization.py: Creates an interactive animation showing MBTA station ridership with heat-mapped error markers on a coordinate grid, featuring a timeline slider and weather condition display for each date.
+
+- visualization.py: Builds a similar animated scatter plot visualization (mapped onto the MBTA routes) of MBTA stations showing actual vs. predicted ridership with color-coded error indicators.
+
+![alt text](data/images/heatmap.gif)
+![alt text](data/images/visualization.gif)
 
 ## Running and Setting Up The Project
 

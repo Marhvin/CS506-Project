@@ -253,6 +253,20 @@ By analyzing the graphs of precipitation (prcp bins) and wind speed (WSPD bins) 
 - However, in stations like Aquarium and Revere Beach, entries increase with higher temperatures.
 - This suggests a correlation with seasonal travel patterns, where people visit more outdoor or recreational areas during summer.
 
+## Running and Setting Up The Project
+
+To setup and run the project automatically, run this script:
+
+```bash
+./run_project.sh
+```
+
+This script will:
+- set up your virtual environment
+- install dependencies
+- process MBTA and Weather dataset
+- generate the model
+- generate the visualization
 
 ## Running Tests
 
@@ -269,11 +283,7 @@ venv\Scripts\activate       # On Windows
 pip install -r requirements.txt
 ```
 
-Alternatively, you can run the setup and entire project using:
-
-```bash
-./run_project.sh
-```
+Alternatively, to run and setup the entire project, see [Running and Setting Up the Project](#running-and-setting-up-the-project) above
 
 ### 2. Tests
 

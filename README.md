@@ -4,7 +4,7 @@
 
 Midterm Report Video: https://youtu.be/1qrfAWM0dHE?feature=shared 
 
-[Jump to Testing Instructions](#running-tests)
+[Jump to Project Setup and Testing Instructions](#running-and-setting-up-the-project)
 
 Using historical data publicly available from the MBTA website, our project predicts the number of people that use specific MBTA stations (measured by gate entries) based on weather conditions including temperature, precipitation, and wind speed.
 

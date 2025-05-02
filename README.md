@@ -3,7 +3,7 @@
 ## Project Description
 
 - Final Report Video: https://www.youtube.com/watch?v=wjziJXPK-m8
-- Midterm Report Video: https://youtu.be/1qrfAWM0dHE?feature=shared 
+- Midterm Report Video: https://youtu.be/1qrfAWM0dHE?feature=shared
 
 [Jump to Project Setup and Testing Instructions](#running-and-setting-up-the-project)
 
@@ -14,6 +14,16 @@ Using historical data publicly available from the MBTA website, our project pred
 ## Goals
 
 The goal of this project is to successfully predict the number of gate entries into MBTA train stations based on weather conditions. This will help MBTA planners understand how weather affects day-to-day ridership to improve operational logistics, such as scheduling train arrivals/departures, staffing, and resource allocation.
+
+## Notebook Overview
+
+- initialModels.ipynb: Implements baseline and enhanced linear regression models to predict MBTA ridership from weather data, including COVID-period features and visualization of results.
+
+- tuningModel.ipynb: Builds more sophisticated models including pipeline models with polynomial features and station-aware models, featuring improved feature engineering and cross-validation techniques.
+
+- dataInsights.ipynb: Explores relationships between weather conditions (temperature, precipitation, wind speed) and ridership across stations using bar plots and general visualizations.
+
+- dataInsightsLine.ipynb: Analyzes weather impacts on ridership specifically by MBTA line color, with stations organized in geographical order to reveal line-specific patterns.
 
 ## Data Collection
 
@@ -111,27 +121,29 @@ We implemented a progressive modeling approach to understand the relationship be
 ![alt text](data/images/secondenhanced.png)
 
 ### Pipeline Model
+
 - Used the same features as second Enhanced LinReg Model
 - Pipeline Model
   - PolynomialFeatures
     - Allows model to learn non‐linear and interaction effects (e.g. lag1 × roll7).
-  - StandardScaler 
+  - StandardScaler
     - Ensures that each feature is on a comparable scale
-  - RidgeCV 
+  - RidgeCV
     - Fits linear model with L2 regularization & uses time‐series cross‐validation to pick the best alpha
 
 ![alt text](data/images/pipeline.png)
 
 ### Station-aware Pipeline Model
-- One-hot encode stations 
+
+- One-hot encode stations
   - Creates one dummy column per station so the model can learn a separate intercept shift for each
   - Added these station dummies to the existing X_cols feature columns
 - Same pipeline as previous Pipeline model
   - PolynomialFeatures
     - Allows model to learn non‐linear and interaction effects (e.g. lag1 × roll7).
-  - StandardScaler 
+  - StandardScaler
     - Ensures that each feature is on a comparable scale
-  - RidgeCV 
+  - RidgeCV
     - Fit linear model with L2 regularization & uses time‐series cross‐validation to pick the best alpha
 
 ![alt text](data/images/stationawarepipeline1.png)
@@ -263,6 +275,7 @@ To setup and run the project automatically, run this script:
 ```
 
 This script will:
+
 - set up your virtual environment
 - install dependencies
 - process MBTA and Weather dataset
@@ -288,14 +301,14 @@ Alternatively, to run and setup the entire project, see [Running and Setting Up 
 
 ### 2. Tests
 
-- **tests/test\_processing.py**\
+- **tests/test_processing.py**\
   Tests the MBTA and weather data preprocessing pipeline:
 
   - Unzipping raw MBTA data
   - Merging and cleaning MBTA and weather data
   - Combining both datasets
 
-- **tests/test\_model\_pipeline.py**\
+- **tests/test_model_pipeline.py**\
   Tests the model pipeline end-to-end:
 
   - Loads the processed merged CSV

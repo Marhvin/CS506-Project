@@ -250,3 +250,61 @@ By analyzing the graphs of precipitation (prcp bins) and wind speed (WSPD bins) 
 - We can observe a clear curve in gated entries decreasing in certain conditions.
 - However, in stations like Aquarium and Revere Beach, entries increase with higher temperatures.
 - This suggests a correlation with seasonal travel patterns, where people visit more outdoor or recreational areas during summer.
+
+
+## Running Tests
+
+This project includes automated tests for both data preprocessing and model pipeline using `pytest`. These tests are located in the `tests/` directory.
+
+### 1. Prerequisites
+
+Ensure your environment is set up with the required dependencies:
+
+```bash
+python -m venv venv
+source venv/bin/activate    # On macOS/Linux
+venv\Scripts\activate       # On Windows
+pip install -r requirements.txt
+```
+
+Alternatively, you can run the setup and entire project using:
+
+```bash
+./run_project.sh
+```
+
+### 2. Tests
+
+- **tests/test\_processing.py**\
+  Tests the MBTA and weather data preprocessing pipeline:
+
+  - Unzipping raw MBTA data
+  - Merging and cleaning MBTA and weather data
+  - Combining both datasets
+
+- **tests/test\_model\_pipeline.py**\
+  Tests the model pipeline end-to-end:
+
+  - Loads the processed merged CSV
+  - Runs training and evaluation on models
+  - Checks whether the output CSV with predictions is created
+
+### 3. Running Tests
+
+To run all tests:
+
+```bash
+pytest -v tests/
+```
+
+To run a specific test file:
+
+```bash
+pytest -v tests/test_processing.py
+pytest -v tests/test_model_pipeline.py
+```
+
+Make sure the following data files are in place before running the tests:
+
+- `data/raw/yearly_mbta_data.zip`
+- `data/raw/weather_data.csv`

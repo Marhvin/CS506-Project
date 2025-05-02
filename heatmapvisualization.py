@@ -87,121 +87,83 @@ station_coords = {
 
 }
 
-entries_raw = pd.read_csv(
-    'mbta_test_predictions.csv',
-    parse_dates=['service_date']
+entries_raw = pd.read_csv('mbta_test_predictions.csv', parse_dates=['service_date'])
+start, end = pd.Timestamp('2022-03-02'), pd.Timestamp('2023-03-02')
+entries = entries_raw[
+    (entries_raw['service_date'] >= start) &
+    (entries_raw['service_date'] <= end) &
+    (entries_raw['station_name'].isin(station_coords))
+].assign(
+    date=lambda d: d['service_date'].dt.strftime('%Y-%m-%d'),
+    x=lambda d: d['station_name'].map(lambda s: station_coords[s][0]),
+    y=lambda d: d['station_name'].map(lambda s: station_coords[s][1])
 )
 
-#reading csv, new dates
-start, end = pd.Timestamp('2022-03-02'), pd.Timestamp('2023-03-02')
-entries = (
-    entries_raw
-    .loc[
-        (entries_raw['service_date'] >= start) &
-        (entries_raw['service_date'] <= end) &
-        (entries_raw['station_name'].isin(station_coords))
-    ]
-    .assign(
-        date=lambda df: df['service_date'].dt.strftime('%Y-%m-%d'),
-        x=lambda df: df['station_name'].map(lambda s: station_coords[s][0]),
-        y=lambda df: df['station_name'].map(lambda s: station_coords[s][1])
-    )
-)
-        
 df = entries.rename(columns={'station_name': 'station'})[
     ['date','station','x','y','tavg','prcp','wspd','actual_entries','predicted_entries']
 ]
-
-#for colors on the dots
 df['error'] = (df['predicted_entries'] - df['actual_entries']).abs()
 
 max_actual = df['actual_entries'].max()
-max_px = 80  
+max_px = 40
+
+stations = list(station_coords.keys())
+xs = [station_coords[s][0] for s in stations]
+ys = [station_coords[s][1] for s in stations]
 
 dates = sorted(df['date'].unique())
 first = dates[0]
-df0 = df[df['date'] == first]
+df0 = df[df['date'] == first].set_index('station')
+
+sizes0 = [ (df0.at[s,'actual_entries'] if s in df0.index else 0) / max_actual * max_px for s in stations ]
+errs0  = [ (df0.at[s,'error'] if s in df0.index else 0) for s in stations ]
+acts0  = [ (df0.at[s,'actual_entries'] if s in df0.index else 0) for s in stations ]
+preds0 = [ (df0.at[s,'predicted_entries'] if s in df0.index else 0) for s in stations ]
 
 scatter0 = go.Scatter(
-    x=df0['x'], y=df0['y'],
-    mode='markers',
-    marker=dict(
-        size=(df0['actual_entries'] / max_actual) * max_px,
-        color=df0['error'],            
-        coloraxis='coloraxis'         
-    ),
-    text=df0['station'],
-    customdata=np.stack([ [df0.at[s,'actual_entries'] for s in df0.index], [df0.at[s,'error'] for s in df0.index],[df0.at[s,'predicted_entries'] for s in df0.index]], axis=-1),
-    hovertemplate=(
-        "%{text}<br>"
-        "Actual entries: %{customdata[0]:.0f}<br>"
-        "Estimated entries: %{customdata[2]:.0f}<br>"
-        "Error: %{customdata[1]:.0f}<extra></extra>"
-    )
+    x=xs, y=ys, mode='markers',
+    marker=dict(size=sizes0, color=errs0, coloraxis='coloraxis'),
+    text=stations,
+    customdata=np.stack([acts0, errs0, preds0], axis=-1),
+    hovertemplate="%{text}<br>Actual: %{customdata[0]:.0f}<br>Predicted:%{customdata[2]:.0f}<br>Error: %{customdata[1]:.0f}<extra></extra>"
 )
 
 layout = go.Layout(
-    title=f"Entries on {first} — …weather…",
+    title=f"Entries on {first}",
     xaxis=dict(visible=False, range=[0,100]),
     yaxis=dict(visible=False, range=[0,100]),
     template='plotly_white',
+    coloraxis=dict(
+        colorscale=[[0,'green'],[1,'red']],
+        cmin=0, cmax=5000,
+        colorbar=dict(x=1.02, y=0.5, title='Error')
+    )
 )
-layout.update(coloraxis=dict(
-    colorscale=[[0.0, 'green'], [1.0, 'red']],
-    cmin=0,                       
-    cmax=df['error'].max(),
-    colorbar=dict(x=1.02, y=0.5, title='|Pred−Act|')
-))
 
 frames = []
 for date in dates:
-    grp = df[df['date'] == date]
-    sizes = (grp['actual_entries'] / max_actual) * max_px
-    sc = go.Scatter(
-        x=grp['x'], y=grp['y'],
-        mode='markers',
-        marker=dict(
-            size=sizes,
-            color=grp['error'],        
-            coloraxis='coloraxis'     
-        ),
-        text=grp['station'],
-        customdata=np.stack([ [df0.at[s,'actual_entries'] for s in df0.index], [df0.at[s,'error'] for s in df0.index],[df0.at[s,'predicted_entries'] for s in df0.index]], axis=-1),
-        hovertemplate=(
-            "%{text}<br>"
-            "Actual entries: %{customdata[0]:.0f}<br>"
-            "Estimated entries: %{customdata[2]:.0f}<br>"
-            "Error: %{customdata[1]:.0f}<extra></extra>"
-        )
-    )
-    # weather for title
-    row = grp.iloc[0]
-    weather = f"{row['tavg']:.1f}°F | {row['prcp']:.2f}\" rain | {row['wspd']:.1f}mph"
+    grp = df[df['date'] == date].set_index('station')
+    sizes = [ (grp.at[s,'actual_entries'] if s in grp.index else 0) / max_actual * max_px for s in stations ]
+    errs  = [ (grp.at[s,'error']          if s in grp.index else 0) for s in stations ]
+    acts  = [ (grp.at[s,'actual_entries'] if s in grp.index else 0) for s in stations ]
+    preds = [ (grp.at[s,'predicted_entries'] if s in grp.index else 0) for s in stations ]
+    row   = grp.iloc[0] if not grp.empty else None
+    weather = f"{row['tavg']:.1f}°F | {row['prcp']:.2f}\" rain | {row['wspd']:.1f}mph" if row is not None else ''
     frames.append(go.Frame(
         name=date,
-        data=[sc],
-        layout=go.Layout(title_text=f"Entries on {date} — {weather}")
+        data=[dict(marker=dict(size=sizes, color=errs, coloraxis='coloraxis'), customdata=np.stack([acts, errs, preds], axis=-1))],
+        layout=go.Layout(title_text=f"Entries on {date} — {weather}"),
+        traces=[0]
     ))
 
 fig = go.Figure(data=[scatter0], layout=layout, frames=frames)
-
 fig.update_layout(
-    updatemenus=[dict(
-        type='buttons', showactive=False,
-        x=1.1, y=1.05, xanchor='right', yanchor='top',
-        buttons=[dict(
-            label='▶ Play',
-            method='animate',
-            args=[None, {'frame':{'duration':200,'redraw':True}, 'fromcurrent':True}]
-        )]
+    updatemenus=[dict(type='buttons', showactive=False,
+        x=1.1,y=1.05,xanchor='right',yanchor='top',
+        buttons=[dict(label='▶ Play',method='animate',args=[None,{'frame':{'duration':200,'redraw':True},'fromcurrent':True}])]
     )],
-    sliders=[dict(
-        active=0, pad={'t':50},
-        steps=[dict(
-            method='animate',
-            args=[[fr.name], {'frame':{'duration':0,'redraw':True}, 'mode':'immediate'}],
-            label=fr.name
-        ) for fr in frames]
+    sliders=[dict(active=0,pad={'t':50},
+        steps=[dict(method='animate',args=[[fr.name],{'frame':{'duration':0,'redraw':True},'mode':'immediate'}],label=fr.name) for fr in frames]
     )]
 )
 
